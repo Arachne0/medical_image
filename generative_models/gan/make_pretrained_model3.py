@@ -47,7 +47,7 @@ class CustomImageDataset(Dataset):
 
 def main(label_name):
     image_dir = f"/home/hail/Desktop/medical_image_project/datasets/labeled/{label_name}"
-    save_dir = "/home/hail/Desktop/medical_image_project/datasets/model_files"
+    save_dir = "/datasets/model_files_gan"
     os.makedirs(save_dir, exist_ok=True)
 
     # Count the number of PNG images in the directory

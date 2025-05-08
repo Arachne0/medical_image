@@ -4,9 +4,9 @@ import shutil
 from tqdm import tqdm  # Import tqdm for progress bar
 
 # Define paths
-image_dir = "/home/hail/Desktop/medical_image_project/datasets/train"
+image_dir = "/home/hail/Desktop/medical_image_project/datasets/bicubic_downsample"
 label_path = "/home/hail/Desktop/medical_image_project/datasets/train_labels.json"
-output_root = "/home/hail/Desktop/medical_image_project/datasets/labeled"
+output_root = "/home/hail/Desktop/medical_image_project/datasets/labeled_downsample"
 
 # NIH Chest X-ray class names (14 classes)
 class_names = [

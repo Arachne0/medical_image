@@ -41,13 +41,13 @@ class CustomImageDataset(Dataset):
         if self.transform:
             image = self.transform(image)
 
-        return image, torch.tensor(1.0)
+        return image, torch.tensor(0.95)
 
 
 
 def main(label_name):
-    image_dir = f"/home/hail/Desktop/medical_image_project/datasets/labeled/{label_name}"
-    save_dir = "/home/hail/Desktop/medical_image_project/datasets/model_files"
+    image_dir = f"/home/hail/Desktop/medical_image_project/datasets/labeled_downsample/{label_name}"
+    save_dir = "/home/hail/Desktop/medical_image_project/datasets/model_files_gan"
     os.makedirs(save_dir, exist_ok=True)
 
     # Count the number of PNG images in the directory
@@ -70,7 +70,7 @@ def main(label_name):
     batch_size = 32
 
     epochs = max(1, (data_len // (batch_size *2)))
-    lr = 0.0002
+    lr = 0.0001
 
     dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -89,7 +89,7 @@ def main(label_name):
     )
 
     # Initialize discriminator
-    model = Discriminator(img_shape=(1, 256, 256)).to(device)
+    model = Discriminator().to(device)
 
     wandb.watch(model, log="all", log_freq=10)
     criterion = nn.BCELoss()
@@ -122,4 +122,4 @@ def main(label_name):
 
 
 if __name__ == "__main__":
-    main("Cardiomegaly")
+    main("Infiltration")
