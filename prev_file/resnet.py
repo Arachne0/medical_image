@@ -6,8 +6,8 @@ import wandb
 import numpy as np
 from tqdm import tqdm
 from torchvision import models
-from functions.nih_loader import nih_loader
-from functions.calculate_metrics import calculate_metrics
+from datasets.nih_loader import nih_loader
+from datasets.calculate_metrics import calculate_metrics
 
 device = torch.device("cuda:2" if torch.cuda.is_available() else "cpu")
 disease_names = [

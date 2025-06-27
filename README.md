@@ -1,9 +1,20 @@
 ``` text.
 python version 3.10
 
-train image : 86524
-test image : 25596
+train image : 56215
+test image : 11097
 ```
+
+
+```bash
+pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu128
+pip install timm
+pip install matplotlib
+pip install scikit-image
+pip install opencv-python
+pip install pickle
+```
+
 
 ## PSNR (Peak Signal-to-Noise Ratio)
 
@@ -35,9 +46,25 @@ Used because the Y channel strongly correlates with human visual perception.
 Helps to evaluate perceived quality more accurately than RGB-based metrics.
 
 
-## 4/29 SH
-I created a train folder by downscaling 1024x1024 images by a factor of 4 using bicubic interpolation. 
-The folder is located at datasets/bicubic_downsample. 
-Based on this, I developed a super-resolution code.
+## 5/21 SH
+| Label               | Count |
+|---------------------|-------|
+| No Finding          | 39302 |
+| Infiltration        | 9353  |
+| Effusion            | 6589  |
+| Atelectasis         | 5728  |
+| Nodule              | 4177  |
+| Mass                | 3567  |
+| Pneumothorax        | 3407  |
+| Pleural_Thickening  | 2418  |
+| Cardiomegaly        | 1563  |
+| Consolidation       | 1521  |
+| Emphysema           | 1499  |
+| Fibrosis            | 1408  |
+| Pneumonia           | 630   |
+| Edema               | 276   |
+| Hernia              | 192   |
+
+
 
 

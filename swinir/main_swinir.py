@@ -9,31 +9,35 @@ import requests
 import wandb
 
 from tqdm import tqdm
-from network import SwinIR as net
-from utils import *
+from prev_files.models.network_swinir import SwinIR as net
+from utils_sh import *
 
 
-def main():
+def main(lesion):
     parser = argparse.ArgumentParser()
     parser.add_argument('--task', type=str, default='classical_sr', help='classical_sr, lightweight_sr, real_sr, '
                                                                      'gray_dn, color_dn, jpeg_car, color_jpeg_car')
     parser.add_argument('--scale', type=int, default=4, help='scale factor: 1, 2, 3, 4, 8')
     parser.add_argument('--noise', type=int, default=15, help='noise level: 15, 25, 50')
     parser.add_argument('--jpeg', type=int, default=10, help='scale factor: 10, 20, 30, 40')
-    parser.add_argument('--training_patch_size', type=int, default=48, help='patch size used in training SwinIR. '
+    parser.add_argument('--training_patch_size', type=int, default=64, help='patch size used in training SwinIR. '
                                        'Just used to differentiate two different settings in Table 2 of the paper. '
                                        'Images are NOT tested patch by patch.')
     parser.add_argument('--large_model', action='store_true', help='use large model, only provided for real image sr')
     parser.add_argument('--model_path', type=str,
-                        default='/home/hail/Desktop/medical_image_project/swinir/model_file/001_classicalSR_DIV2K_s48w8_SwinIR-M_x4.pth')
+                        default='/home/hail/SH/medical_image/swinir/model_file/001_classicalSR_DF2K_s64w8_SwinIR-M_x4.pth')
     #
-    parser.add_argument('--folder_lq', type=str, default='/home/hail/Desktop/medical_image_project/datasets/bicubic_downsample', help='input low-quality test image folder')
-    parser.add_argument('--folder_gt', type=str, default='/home/hail/Desktop/medical_image_project/datasets/train', help='input ground-truth test image folder')
+    # parser.add_argument('--folder_lq', type=str, default='/home/hail/SH/medical_image/datasets/train/x4_bicubic/{a}', help='input low-quality test image folder')
+    folder_lq_default = f'/home/hail/SH/medical_image/datasets/train/64/{lesion}'
+    parser.add_argument('--folder_lq', type=str, default=folder_lq_default, help='input low-quality test image folder')
+
+    folder_gt_default = f'/home/hail/SH/medical_image/datasets/train/256/{lesion}'
+    parser.add_argument('--folder_gt', type=str, default=folder_gt_default, help='input ground-truth test image folder')
     parser.add_argument('--tile', type=int, default=None, help='Tile size, None for no tile during testing (testing as a whole)')
     parser.add_argument('--tile_overlap', type=int, default=32, help='Overlapping of different tiles')
     args = parser.parse_args()
 
-    wandb.init(project="medical_image_project", entity="hails", name="original_swinir_x4", config=vars(args))
+    wandb.init(project="medical_image_project", entity="hails", name=f'swinir_x4_{lesion}', config=vars(args))
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     # set up model
@@ -51,7 +55,7 @@ def main():
     model = model.to(device)
 
     # setup folder and path
-    folder, save_dir, border, window_size = setup(args)
+    folder, save_dir, border, window_size = setup(args, lesion)
     os.makedirs(save_dir, exist_ok=True)
     test_results = OrderedDict()
     test_results['psnr'] = []
@@ -218,17 +222,17 @@ def define_model(args):
     return model
 
 
-def setup(args):
+def setup(args, lesion):
     # 001 classical image sr/ 002 lightweight image sr
     if args.task in ['classical_sr', 'lightweight_sr']:
-        save_dir = f'results/swinir_{args.task}_x{args.scale}'
+        save_dir = f'save_image/{lesion}'
         folder = args.folder_gt
         border = args.scale
         window_size = 8
 
     # 003 real-world image sr
     elif args.task in ['real_sr']:
-        save_dir = f'results/swinir_{args.task}_x{args.scale}'
+        save_dir = f'results/{lesion}'
         if args.large_model:
             save_dir += '_large'
         folder = args.folder_lq
@@ -334,4 +338,11 @@ def test(img_lq, model, args, window_size):
     return output
 
 if __name__ == '__main__':
-    main()
+    lesion_root = "/home/hail/SH/medical_image/datasets/train/64"
+    target_lesions = ['Atelectasis', 'No Finding']
+
+    for lesion in target_lesions:
+        lesion_path = os.path.join(lesion_root, lesion)
+        if os.path.isdir(lesion_path):
+            print(f"Processing lesion: {lesion}")
+            main(lesion)

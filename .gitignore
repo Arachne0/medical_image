@@ -5,12 +5,29 @@ logs/
 wandb/
 
 datasets/
-model_file/
+
+figures/
+LR/
+models/
 results/
+save_image/
+binary_class/
+model_file/
+original/
+
+assets/
+experiments/
+inputs/
+save_image/
+
+data/
+
 
 *.pth
+*.csv
 *.log
 *.out
+*.txt
 *.model
 *.zip
 *.png
